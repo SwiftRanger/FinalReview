@@ -1,0 +1,27 @@
+name: Build and Push Unified Fullstack Image
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⚙️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔑 Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 🛠️ Build and Push Single Image
+        uses: docker/build-push-action@v5
+        with:
+          context: . # Uses the Dockerfile in the root of the repository
+          push: true
+          # 🚨 IMPORTANT: REPLACE 'finalreview-app' with your desired Docker Hub repo name
+          tags: ${{ secrets.DOCKER_USERNAME }}/finalreview-app:latest
