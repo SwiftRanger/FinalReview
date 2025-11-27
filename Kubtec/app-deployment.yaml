@@ -5,10 +5,11 @@ metadata:
   labels:
     app: event-app
 spec:
-  type: LoadBalancer # Exposes the service externally (via a public IP)
+  type: NodePort # Exposes the service externally (via a public IP)
   ports:
     - port: 8082 # The port users access externally
-      targetPort: 2025 # The container's internal running port (as confirmed in your logs)
+      targetPort: 2025 
+      nodePort: 30096 # The container's internal running port (as confirmed in your logs)
       protocol: TCP
   selector:
     app: event-app
