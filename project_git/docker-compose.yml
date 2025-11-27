@@ -1,3 +1,4 @@
+version: '3.8'
 
 services:
   db:
@@ -5,6 +6,7 @@ services:
     container_name: event-db
     restart: always
     environment:
+      # Database connection credentials
       MYSQL_DATABASE: event
       MYSQL_ROOT_PASSWORD: root
     ports:
@@ -14,12 +16,12 @@ services:
     networks:
       - event-net
 
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
-    container_name: event-backend
+  # This single service PULLS the unified image from Docker Hub.
+  app-unified: 
+    image: 2380031452vhas/finalreview-app:latest # ⬅️ THE IMAGE BUILT BY GITHUB ACTIONS
+    container_name: event-app-unified
     restart: always
+    # Environment variables for your Java Spring Boot application
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/event
       SPRING_DATASOURCE_USERNAME: root
@@ -27,21 +29,9 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
       - db
+    # Exposes your application on your host machine at port 8082
     ports:
-      - "8082:8081"
-    networks:
-      - event-net
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    container_name: event-frontend
-    restart: always
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
+      - "8082:8081" 
     networks:
       - event-net
 
