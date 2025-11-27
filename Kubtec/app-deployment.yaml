@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-app-service
+  labels:
+    app: event-app
+spec:
+  type: LoadBalancer # Exposes the service externally (via a public IP)
+  ports:
+    - port: 8082 # The port users access externally
+      targetPort: 2025 # The container's internal running port (as confirmed in your logs)
+      protocol: TCP
+  selector:
+    app: event-app
+    tier: application
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-app-deployment
+  labels:
+    app: event-app
+spec:
+  replicas: 2 # Running two instances for high availability
+  selector:
+    matchLabels:
+      app: event-app
+      tier: application
+  template:
+    metadata:
+      labels:
+        app: event-app
+        tier: application
+    spec:
+      containers:
+        - name: event-app-unified
+          # Must use your correct Docker Hub username: 2300031452vhas
+          image: 2300031452vhas/finalreview-app:latest 
+          ports:
+            - containerPort: 2025 # The port the Spring app is actually listening on
+          env:
+            # Database connection URL points to the K8s service name: mysql-service
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-service:3306/event"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "root"
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: "update"
+          # Liveness probe to ensure K8s restarts the app if it hangs
+          livenessProbe:
+            httpGet:
+              path: /actuator/health # Assuming you use the Spring Boot Actuator
+              port: 2025
+            initialDelaySeconds: 45 # Give Spring time to boot up and connect to MySQL
+            periodSeconds: 10
+          resources:
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
