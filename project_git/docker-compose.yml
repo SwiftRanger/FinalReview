@@ -31,7 +31,7 @@ services:
       - db
     # Exposes your application on your host machine at port 8082
     ports:
-      - "8082:8081" 
+      - "8082:2025" 
     networks:
       - event-net
 
