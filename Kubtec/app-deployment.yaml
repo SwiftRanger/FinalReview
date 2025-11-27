@@ -35,7 +35,7 @@ spec:
       containers:
         - name: event-app-unified
           # Must use your correct Docker Hub username: 2300031452vhas
-          image: 2300031452vhas/finalreview-app:latest 
+          image: 2300031452vihas/finalreview-app:latest 
           ports:
             - containerPort: 2025 # The port the Spring app is actually listening on
           env:
