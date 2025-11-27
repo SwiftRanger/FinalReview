@@ -18,7 +18,7 @@ services:
 
   # This single service PULLS the unified image from Docker Hub.
   app-unified: 
-    image: 2380031452vhas/finalreview-app:latest # ⬅️ THE IMAGE BUILT BY GITHUB ACTIONS
+    image: 2300031452vihas/finalreview-app:latest # ⬅️ THE IMAGE BUILT BY GITHUB ACTIONS
     container_name: event-app-unified
     restart: always
     # Environment variables for your Java Spring Boot application
